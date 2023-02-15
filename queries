@@ -1,0 +1,84 @@
+Here are some queries to retrive the desired data from the database.
+This contains the following queries.
+- SELECT (to select paricular data from the table)
+- UPDATE (it is a DML command and helps in updating the data)
+- ALTER  (it is a DDL command and help in altering the schema)
+- INSERT INTO (it insert data into the tables)
+- DELETE  (it is a DML command and delete data from the table)
+- THE AGGREGATION FUNCTION (it is agroup of function like AVG,SUM,COUNT)
+- CONSTRAINSTS (the helps in filtering out the data e.f WHERE,IN ,FROM and other operators.
+- JOINS (it is a common attribute and a condition, multiple attributes are selected)
+- TRIGGERS ( it helps in difing the actions performed before or after a UPDATE,DELETE OR INSERT. 
+- ON DELETE ( it helps in maintaing referential intigrity of the foeregin key)
+- UNION ( it combine the two types of data)
+- WILDCARDS ( it helps in searching some data in the table)
+- NESTED QUERIES ( query inside a query, first the inner query will execute then the outer query)
+
+
+-- Find all employees who are female & born after 1969 or who make over 80000
+SELECT *
+FROM employee
+WHERE (birth_day >= '1970-01-01' AND sex = 'F') OR salary > 80000;
+
+-- Find all employees named Jim, Michael, Johnny or David
+SELECT *
+FROM employee
+WHERE first_name IN ('Jim', 'Michael', 'Johnny', 'David');
+
+-- Find out how many males and females there are
+SELECT COUNT(sex), sex
+FROM employee
+GROUP BY sex
+
+-- Find the total amount of money spent by each client
+SELECT SUM(total_sales), client_id
+FROM works_with
+GROUP BY client_id;
+
+-- Find any client's who are an LLC
+SELECT *
+FROM client
+WHERE client_name LIKE '%LLC';
+
+-- Find any employee born on the 10th day of the month
+SELECT *
+FROM employee
+WHERE birth_day LIKE '_____10%';
+
+-- Find a list of employee and branch names
+SELECT employee.first_name AS Employee_Branch_Names
+FROM employee
+UNION
+SELECT branch.branch_name
+FROM branch;
+
+-- Add the extra branch
+INSERT INTO branch VALUES(4, "Buffalo", NULL, NULL);
+
+SELECT employee.emp_id, employee.first_name, branch.branch_name
+FROM employee
+JOIN branch    -- LEFT JOIN, RIGHT JOIN
+ON employee.emp_id = branch.mgr_id;
+
+-- Find the names of employees who work with clients handled by the scranton branch
+SELECT employee.first_name, employee.last_name
+FROM employee
+WHERE employee.emp_id IN (
+                         SELECT works_with.emp_id
+                         FROM works_with
+                         )
+AND employee.branch_id = 2;
+
+DELIMITER $$
+CREATE
+    TRIGGER my_trigger BEFORE INSERT
+    ON employee
+    FOR EACH ROW BEGIN
+        INSERT INTO trigger_test VALUES('added new employee');
+    END$$
+DELIMITER ;
+INSERT INTO employee
+VALUES(109, 'Oscar', 'Martinez', '1968-02-19', 'M', 69000, 106, 3);
+
+
+
